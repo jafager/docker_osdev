@@ -1,0 +1,7 @@
+#!/bin/bash
+
+curl -O https://ftp.gnu.org/gnu/binutils/binutils-2.29.1.tar.gz
+curl -O https://ftp.gnu.org/gnu/gcc/gcc-7.2.0/gcc-7.2.0.tar.gz
+curl -O http://www.nasm.us/pub/nasm/releasebuilds/2.13.01/nasm-2.13.01.tar.gz
+curl -O https://download.qemu.org/qemu-2.10.1.tar.xz
+curl -O https://ftp.gnu.org/gnu/xorriso/xorriso-1.4.8.tar.gz

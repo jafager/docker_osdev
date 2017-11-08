@@ -2,12 +2,15 @@
 FROM centos:7
 RUN yum -y -q update
 
+
 # Install basic compiler tools
 RUN yum -y -q install gcc make file automake autoconf libtool gcc-c++
+
 
 # Create a temporary build directory
 RUN mkdir /root/build
 WORKDIR /root/build
+
 
 # Compile and install target binutils
 COPY binutils-2.29.1.tar.gz .
@@ -19,8 +22,9 @@ RUN make -j 4
 RUN make install
 WORKDIR /root/build
 
+
 # Compile and install target GCC
-RUN yum -y -q install gmp-devel mpfr-devel libmpc-devel
+RUN yum -yq install gmp-devel mpfr-devel libmpc-devel
 COPY gcc-7.2.0.tar.gz .
 RUN tar xfz gcc-7.2.0.tar.gz
 RUN mkdir gcc-build
@@ -32,6 +36,7 @@ RUN make install-gcc
 RUN make install-target-libgcc
 WORKDIR /root/build
 
+
 # Compile and install NASM
 COPY nasm-2.13.01.tar.gz .
 RUN tar xfz nasm-2.13.01.tar.gz
@@ -40,6 +45,7 @@ RUN ./configure --prefix=/usr/local
 RUN make -j 4
 RUN make install
 WORKDIR /root/build
+
 
 # Compile and install QEMU
 RUN yum -y -q install zlib-devel glib2-devel
@@ -51,6 +57,7 @@ RUN make -j 4
 RUN make install
 WORKDIR /root/build
 
+
 # Compile and install Xorisso
 COPY xorriso-1.4.8.tar.gz .
 RUN tar xfz xorriso-1.4.8.tar.gz
@@ -60,13 +67,30 @@ RUN make -j 4
 RUN make install
 WORKDIR /root/build
 
+
 # Remove temporary build directory
 WORKDIR /
 RUN rm -fr /root/build
 
+
 # Install developer tools for interactive use
 RUN yum -y -q install git grub2 grub2-tools
 
-# Container starts with bash shell in root directory
-WORKDIR /
-CMD /bin/bash
+
+# Create osdev user and populate home directory
+RUN useradd -M osdev
+RUN mkdir /home/osdev
+RUN chmod 700 /home/osdev
+COPY home_osdev /home/osdev
+RUN chown -R osdev:osdev /home/osdev
+
+
+# Install fancy prompt script
+COPY abbreviate_cwd /usr/local/bin
+RUN chmod 755 /usr/local/bin/abbreviate_cwd
+
+
+# Container starts with bash login shell for osdev user
+USER osdev
+WORKDIR /home/osdev
+CMD bash --login

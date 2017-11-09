@@ -24,7 +24,7 @@ WORKDIR /root/build
 
 
 # Compile and install target GCC
-RUN yum -yq install gmp-devel mpfr-devel libmpc-devel
+RUN yum -y -q install gmp-devel mpfr-devel libmpc-devel
 COPY gcc-7.2.0.tar.gz .
 RUN tar xfz gcc-7.2.0.tar.gz
 RUN mkdir gcc-build
@@ -74,7 +74,7 @@ RUN rm -fr /root/build
 
 
 # Install developer tools for interactive use
-RUN yum -y -q install git grub2 grub2-tools
+RUN yum -y -q install git grub2 grub2-tools vim telnet net-tools
 
 
 # Create osdev user and populate home directory
@@ -88,6 +88,11 @@ RUN chown -R osdev:osdev /home/osdev
 # Install fancy prompt script
 COPY abbreviate_cwd /usr/local/bin
 RUN chmod 755 /usr/local/bin/abbreviate_cwd
+
+
+# Connections to the outside world
+EXPOSE 5900
+VOLUME /home/osdev
 
 
 # Container starts with bash login shell for osdev user
